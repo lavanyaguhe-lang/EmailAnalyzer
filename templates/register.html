@@ -1,0 +1,95 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PHISH-SHIELD | Register Scanner</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body class="auth-page login-page">
+
+    <div class="auth-card" style="max-width: 720px; text-align: left;">
+        <div class="auth-header" style="text-align: center;">
+            <i class='bx bxs-bug'></i>
+            <h2>Register Page - Phishing Scanner</h2>
+            <p>Enter email text or URL and run hybrid Rule + ML detection</p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="auth-messages">
+                    {% for category, message in messages %}
+                        <p class="auth-message">{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <form action="/register" method="POST" class="auth-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="input-group">
+                <label>Email Text</label>
+                <textarea name="email_text" rows="7" placeholder="Paste email body here" style="width: 100%; background: rgba(1, 4, 9, 0.8); border: 1px solid var(--border); padding: 14px; border-radius: 4px; color: white; box-sizing: border-box; resize: vertical;">{{ email_text or '' }}</textarea>
+            </div>
+
+            <div class="input-group">
+                <label>URL</label>
+                <input type="text" name="url_input" placeholder="https://example.com/login" value="{{ url_input or '' }}">
+            </div>
+
+            <button type="submit" class="btn-primary">SCAN</button>
+        </form>
+
+        {% if result %}
+        <div class="card" style="margin-top: 1rem; margin-bottom: 1rem;">
+            <h3>Scan Result</h3>
+            <p>
+                Verdict:
+                <span class="status-pill {{ result.pill_class }}">{{ result.verdict }}</span>
+            </p>
+            <p>Risk Score: <strong>{{ result.risk_score }}%</strong></p>
+            <p>Model Score: <strong>{{ result.ml_score }}%</strong></p>
+            <p>Sentiment: <strong>{{ result.sentiment }}</strong></p>
+            <p>Reason: {{ result.explanation }}</p>
+        </div>
+        {% endif %}
+
+        <div class="card" style="margin-bottom: 0;">
+            <h3>Recent Scans (Saved in Database)</h3>
+            <table class="audit-table">
+                <thead>
+                    <tr>
+                        <th>TIME</th>
+                        <th>RISK</th>
+                        <th>VERDICT</th>
+                        <th>DETAILS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in history %}
+                    <tr>
+                        <td>{{ row.analysis_date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                        <td>{{ row.risk_score }}%</td>
+                        <td><span class="status-pill {{ row.pill_class }}">{{ row.verdict }}</span></td>
+                        <td>{{ row.explanation }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4">No scans found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="auth-footer" style="margin-top: 1rem; text-align: center;">
+            <a href="/dashboard">Dashboard</a>
+            <span>|</span>
+            <a href="/report">Latest Report</a>
+            <span>|</span>
+            <a href="/logout">Logout</a>
+        </div>
+    </div>
+
+</body>
+</html>

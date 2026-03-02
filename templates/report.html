@@ -1,0 +1,203 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PHISH-SHIELD | Analysis Report</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+body {
+    margin: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #020617;
+    color: #e2e8f0;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background-image:
+        linear-gradient(#0f172a 1px, transparent 1px),
+        linear-gradient(90deg, #0f172a 1px, transparent 1px);
+    background-size: 40px 40px;
+    z-index: -1;
+}
+
+.sidebar {
+    width: 220px;
+    height: 100vh;
+    position: fixed;
+    background: #000814;
+    border-right: 2px solid #06b6d4;
+    padding: 20px;
+}
+
+.sidebar h2 {
+    color: #06b6d4;
+}
+
+.sidebar a {
+    display: block;
+    margin: 20px 0;
+    text-decoration: none;
+    color: #94a3b8;
+}
+
+.sidebar a:hover {
+    color: #06b6d4;
+}
+
+.main {
+    margin-left: 240px;
+    padding: 40px;
+}
+
+.card {
+    background: #0f172a;
+    padding: 25px;
+    margin-bottom: 30px;
+    border: 1px solid #1e293b;
+    position: relative;
+}
+
+.card::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    border-top: 20px solid #06b6d4;
+    border-left: 20px solid transparent;
+}
+
+.risk {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.safe { color: #22c55e; }
+.danger { color: #ef4444; }
+.warning { color: #f59e0b; }
+
+button {
+    padding: 10px 20px;
+    background: #06b6d4;
+    border: none;
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #0891b2;
+}
+</style>
+</head>
+<body>
+<div class="sidebar">
+    <div class="logo" style="color: var(--accent); font-weight: bold; font-size: 1.5rem; margin-bottom: 3rem;">
+        <i class='bx bxs-shield-x'></i> PHISH-SHIELD
+    </div>
+    <a href="/dashboard" class="nav-item"><i class='bx bxs-terminal'></i> ANALYZER</a>
+    <a href="/alerts" class="nav-item"><i class='bx bxs-bell-ring'></i> ALERT CENTER</a>
+    <a href="/users" class="nav-item"><i class='bx bxs-user-detail'></i> USER MANAGEMENT</a>
+    <a href="/about" class="nav-item"><i class='bx bxs-info-circle'></i> ABOUT SYSTEM</a>
+    <a href="/system" class="nav-item"><i class='bx bxs-chip'></i> SYSTEM STATUS</a>
+    <a href="/settings" class="nav-item"><i class='bx bxs-cog'></i> SETTINGS</a>
+    <a href="/logout" class="nav-item terminate"><i class='bx bxs-log-out'></i> TERMINATE</a>
+</div>
+
+<div class="main">
+    <h1>FORENSIC REPORT</h1>
+    <p>OPERATOR: {{ operator }} | STATUS: <span class="safe">ANALYZED</span></p>
+
+    <div class="card">
+        <h3>THREAT LEVEL</h3>
+        <p class="risk {{ risk_class }}">{{ risk_score }}% RISK</p>
+        <p>{{ ai_explanation }}</p>
+        <p>RESULT: <strong class="{{ risk_class }}">{{ threat_label }}</strong></p>
+        <p>SCAN ID: {{ scan_id }}</p>
+        <p>TIME: {{ scan_time.strftime('%Y-%m-%d %H:%M:%S') if scan_time else 'N/A' }}</p>
+        <p>EMAIL PREVIEW: {{ email_preview }}</p>
+    </div>
+
+    <div class="card">
+        <h3>SPAM CLASSIFICATION</h3>
+        <canvas id="spamChart"></canvas>
+    </div>
+
+    <div class="card">
+        <h3>SENTIMENT ANALYSIS</h3>
+        <canvas id="sentimentChart"></canvas>
+    </div>
+
+    <div class="card">
+        <h3>EXPORT REPORT</h3>
+        <button onclick="window.print()">DOWNLOAD PDF</button>
+    </div>
+</div>
+
+<script id="report-data" type="application/json">
+{{ {
+    "spam_labels": spam_labels|default([]),
+    "spam_values": spam_values|default([]),
+    "sentiment_labels": sentiment_labels|default([]),
+    "sentiment_values": sentiment_values|default([])
+}|tojson }}
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const payload = document.getElementById("report-data");
+    let data = {
+        spam_labels: [],
+        spam_values: [],
+        sentiment_labels: [],
+        sentiment_values: []
+    };
+
+    if (payload && payload.textContent) {
+        try {
+            data = JSON.parse(payload.textContent);
+        } catch (err) {
+            console.error("Invalid report payload", err);
+        }
+    }
+
+    const spamCanvas = document.getElementById("spamChart");
+    const sentimentCanvas = document.getElementById("sentimentChart");
+
+    if (spamCanvas && window.Chart) {
+        new Chart(spamCanvas, {
+            type: "pie",
+            data: {
+                labels: data.spam_labels,
+                datasets: [{
+                    data: data.spam_values,
+                    backgroundColor: ["#ef4444", "#22c55e"]
+                }]
+            },
+            options: {}
+        });
+    }
+
+    if (sentimentCanvas && window.Chart) {
+        new Chart(sentimentCanvas, {
+            type: "bar",
+            data: {
+                labels: data.sentiment_labels,
+                datasets: [{
+                    label: "Sentiment",
+                    data: data.sentiment_values,
+                    backgroundColor: ["#3b82f6", "#f59e0b", "#10b981"]
+                }]
+            },
+            options: {}
+        });
+    }
+});
+</script>
+</body>
+</html>

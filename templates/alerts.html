@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PHISH-SHIELD | Alert Center</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body>
+<div class="main-container about-layout">
+    <aside class="sidebar">
+        <div class="logo" style="color: var(--accent); font-weight: bold; font-size: 1.5rem; margin-bottom: 3rem;">
+            <i class='bx bxs-shield-x'></i> PHISH-SHIELD
+        </div>
+        <nav>
+            <a href="/dashboard" class="nav-item"><i class='bx bxs-terminal'></i> ANALYZER</a>
+            <a href="/alerts" class="nav-item active"><i class='bx bxs-bell-ring'></i> ALERT CENTER</a>
+            <a href="/users" class="nav-item"><i class='bx bxs-user-detail'></i> USER MANAGEMENT</a>
+            <a href="/about" class="nav-item"><i class='bx bxs-info-circle'></i> ABOUT SYSTEM</a>
+            <a href="/system" class="nav-item"><i class='bx bxs-chip'></i> SYSTEM STATUS</a>
+            <a href="/settings" class="nav-item"><i class='bx bxs-cog'></i> SETTINGS</a>
+            <a href="/logout" class="nav-item terminate"><i class='bx bxs-log-out'></i> TERMINATE</a>
+        </nav>
+    </aside>
+
+    <main class="main-content about-layout">
+        <header class="about-header">
+            <p class="panel-eyebrow">Threat Monitoring</p>
+            <h1>Alert Center</h1>
+            <p class="panel-copy">Real-Time Threat Monitoring from MySQL Scan Data</p>
+        </header>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <section class="card about-card" style="padding: 0.9rem 1rem; margin-bottom: 1rem;">
+                <p style="margin: 0;">{{ message }}</p>
+            </section>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <section class="card about-card" style="margin-bottom: 1.2rem;">
+            <form method="POST" action="{{ url_for('delete_all_alerts') }}" onsubmit="return confirm('Delete all alerts? This cannot be undone.')">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" style="background:#dc2626;color:#fff;border:none;padding:8px 14px;font-weight:700;cursor:pointer;">DELETE ALL</button>
+            </form>
+        </section>
+
+        {% if alerts %}
+            {% for alert in alerts %}
+            <section class="card about-card">
+                <h3>{{ alert.title }}</h3>
+                <p>{{ alert.message }}</p>
+                <p><span class="status-pill {{ 'pill-red' if alert.level in ['HIGH', 'CRITICAL'] else ('pill-amber' if alert.level == 'MEDIUM' else 'pill-green') }}">{{ alert.level }}</span></p>
+                <p><strong>Risk Score:</strong> {{ alert.risk_score }}%</p>
+                <p><small>{{ alert.time.strftime('%Y-%m-%d %H:%M:%S') if alert.time else 'N/A' }}</small></p>
+
+                <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                    <a class="action-btn" href="{{ url_for('report_by_scan', scan_id=alert.id) }}">VIEW REPORT</a>
+                    <form method="POST" action="{{ url_for('delete_alert', scan_id=alert.id) }}" onsubmit="return confirm('Delete this alert?')">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" style="background:#dc2626;color:#fff;border:none;padding:8px 12px;font-weight:700;cursor:pointer;">DELETE</button>
+                    </form>
+                </div>
+            </section>
+            {% endfor %}
+        {% else %}
+            <section class="card about-card">
+                <h3>No Alerts Yet</h3>
+                <p>No scan history found. Run a scan to generate live alerts.</p>
+            </section>
+        {% endif %}
+    </main>
+</div>
+</body>
+</html>

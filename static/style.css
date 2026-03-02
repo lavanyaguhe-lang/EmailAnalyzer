@@ -1,0 +1,446 @@
+/* --- SOC Terminal Theme Variables --- */
+:root {
+    --bg-main: #020617;           /* Deep Navy */
+    --bg-card: #0f172a;           /* Card Navy */
+    --border: #30363d;            /* Subtle Border */
+    --accent: #00d4ff;            /* Neon Cyan Accent */
+    --accent-glow: rgba(0, 212, 255, 0.3);
+    --danger: #ff4b4b;            /* Threat Red */
+    --success: #00ff88;           /* Secure Green */
+    --text-primary: #e6edf3;      /* Light Text */
+    --text-secondary: #8b949e;    /* Dimmed Text */
+    --font-mono: 'Fira Code', 'Courier New', monospace;
+}
+
+/* --- Base Styles & Tech Background --- */
+body {
+    background-color: var(--bg-main);
+    background-image: 
+        linear-gradient(rgba(0, 212, 255, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 212, 255, 0.08) 1px, transparent 1px);
+    background-size: 30px 30px; /* Forensic Grid Pattern */
+    color: var(--text-primary);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    margin: 0;
+    overflow-x: hidden;
+}
+
+/* --- 1. Authentication Pages (Login & Register) --- */
+.auth-page {
+    display: flex; /* */
+    justify-content: center; /* */
+    align-items: center; /* */
+    min-height: 100vh; /* */
+    backdrop-filter: blur(4px);
+}
+
+.auth-card {
+    background: var(--bg-card); /* */
+    border: 1px solid var(--accent); /* Neon border for high-end look */
+    box-shadow: 0 0 25px var(--accent-glow); /* Glowing effect */
+    padding: 3rem; /* */
+    border-radius: 4px; /* Professional sharp corners */
+    width: 100%;
+    max-width: 420px; /* */
+    text-align: center;
+}
+
+.auth-header i { font-size: 3.5rem; color: var(--accent); margin-bottom: 1rem; }
+.auth-header h2 { font-size: 1.6rem; letter-spacing: 1px; margin-bottom: 0.5rem; }
+
+.input-group { margin-bottom: 1.5rem; text-align: left; } /* */
+.input-group label { display: block; color: var(--text-secondary); margin-bottom: 8px; font-size: 0.85rem; font-weight: 600; } /* */
+.input-group input {
+    width: 100%; /* */
+    background: rgba(1, 4, 9, 0.8);
+    border: 1px solid var(--border); /* */
+    padding: 14px; /* */
+    border-radius: 4px;
+    color: white; /* */
+    box-sizing: border-box; /* */
+    transition: 0.3s;
+}
+
+.input-group input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 10px var(--accent-glow); }
+
+.btn-primary {
+    width: 100%; /* */
+    background: var(--accent); /* */
+    color: var(--bg-main);
+    border: none;
+    padding: 15px; /* */
+    border-radius: 4px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    cursor: pointer; /* */
+}
+
+.btn-primary:hover { background: #fff; transform: translateY(-2px); box-shadow: 0 5px 15px var(--accent-glow); }
+
+/* --- 2. Dashboard Advanced Layout --- */
+.main-container {
+    display: grid;
+    grid-template-columns: 280px 1fr; /* Fixed Sidebar Width */
+    grid-template-areas: "sidebar content";
+    min-height: 100vh;
+}
+
+.sidebar {
+    grid-area: sidebar;
+    background: #000814; /* */
+    border-right: 2px solid var(--accent); /* Professional divider */
+    padding: 2.5rem 1.5rem;
+    position: sticky; /* */
+    top: 0;
+    height: 100vh;
+}
+
+.main-content {
+    grid-area: content;
+    padding: 3rem; /* */
+}
+
+/* --- Forensic Cards & Tables --- */
+.card {
+    background: var(--bg-card); /* */
+    border: 1px solid var(--border); /* */
+    padding: 2rem; /* */
+    margin-bottom: 2rem; /* */
+    position: relative;
+    overflow: hidden;
+}
+
+/* High-tech corner decoration */
+.card::after {
+    content: "";
+    position: absolute;
+    top: 0; right: 0;
+    border-style: solid;
+    border-width: 0 20px 20px 0;
+    border-color: transparent var(--accent) transparent transparent;
+}
+
+.audit-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.audit-table th {
+    background: rgba(0, 212, 255, 0.1);
+    color: var(--accent);
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    padding: 1.2rem;
+    text-align: left;
+}
+
+.audit-table td { padding: 1.2rem; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+
+.status-pill {
+    padding: 5px 12px;
+    border-radius: 2px;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: bold;
+    border: 1px solid;
+}
+
+.pill-red { color: var(--danger); border-color: var(--danger); background: rgba(255, 75, 75, 0.1); }
+.pill-green { color: var(--success); border-color: var(--success); background: rgba(0, 255, 136, 0.1); }
+.pill-amber { color: #f59e0b; border-color: #f59e0b; background: rgba(245, 158, 11, 0.12); }
+
+.action-btn {
+    display: inline-block;
+    padding: 6px 10px;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    text-decoration: none;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    background: rgba(0, 212, 255, 0.08);
+}
+
+.action-btn:hover {
+    background: var(--accent);
+    color: #010409;
+}
+
+/* System Status Pulse */
+.pulse {
+    height: 10px; width: 10px; background: var(--success); border-radius: 50%;
+    display: inline-block; margin-right: 10px; box-shadow: 0 0 10px var(--success);
+    animation: pulse-animation 2s infinite;
+}
+
+@keyframes pulse-animation {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.7); }
+    70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(0, 255, 136, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 255, 136, 0); }
+}
+
+/* --- 3. Interactive Login Experience --- */
+.login-page {
+    background-image:
+        linear-gradient(rgba(1, 4, 9, 0.7), rgba(1, 4, 9, 0.8)),
+        url("https://images.unsplash.com/photo-1550751827-4bd374c3f58b");
+        
+    background-size: cover;
+    background-position: center;
+}
+
+.login-shell {
+    width: min(1080px, 94%);
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 1.5rem;
+    align-items: stretch;
+}
+
+.login-panel {
+    border: 1px solid rgba(0, 212, 255, 0.32);
+    background: rgba(1, 12, 22, 0.55);
+    padding: 2rem;
+    border-radius: 6px;
+    box-shadow: 0 24px 45px rgba(0, 0, 0, 0.35);
+}
+
+.panel-eyebrow {
+    color: var(--accent);
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    font-size: 0.72rem;
+    margin: 0 0 0.8rem;
+}
+
+.login-panel h1 {
+    margin: 0 0 0.8rem;
+    font-size: 2.2rem;
+    letter-spacing: 0.4px;
+}
+
+.panel-copy {
+    color: var(--text-secondary);
+    line-height: 1.5;
+    max-width: 46ch;
+}
+
+.panel-metrics {
+    margin-top: 1.2rem;
+    display: grid;
+    gap: 0.8rem;
+}
+
+.metric-chip {
+    border: 1px solid rgba(0, 212, 255, 0.25);
+    background: rgba(0, 212, 255, 0.08);
+    padding: 0.65rem 0.8rem;
+    font-family: var(--font-mono);
+    font-size: 0.84rem;
+}
+
+.metric-chip i {
+    color: var(--accent);
+    margin-right: 0.4rem;
+}
+
+.login-card {
+    max-width: 420px;
+    margin: 0 auto;
+}
+
+.auth-messages {
+    margin-bottom: 0.9rem;
+    text-align: left;
+}
+
+.auth-message {
+    margin: 0.4rem 0;
+    color: #f0f6fc;
+    font-size: 0.9rem;
+}
+
+.password-group {
+    position: relative;
+}
+
+.password-group input {
+    padding-right: 44px;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 10px;
+    top: 39px;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.15rem;
+    cursor: pointer;
+}
+
+.password-toggle:hover {
+    color: var(--accent);
+}
+
+@media (max-width: 900px) {
+    .login-shell {
+        grid-template-columns: 1fr;
+    }
+    .login-panel {
+        order: 2;
+    }
+    .login-card {
+        order: 1;
+    }
+}
+
+/* --- 4. About Page --- */
+.nav-item {
+    color: var(--text-secondary);
+    display: block;
+    margin-bottom: 1rem;
+    text-decoration: none;
+}
+
+.nav-item i {
+    margin-right: 0.4rem;
+}
+
+.nav-item:hover,
+.nav-item.active {
+    color: var(--accent);
+}
+
+.nav-item.terminate {
+    color: var(--danger);
+}
+
+.about-layout .main-content {
+    max-width: 1100px;
+}
+
+.about-header {
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1.6rem;
+    padding-bottom: 1rem;
+}
+
+.about-header h1 {
+    margin: 0.2rem 0 0.5rem;
+    letter-spacing: -0.5px;
+}
+
+.about-card h3 {
+    margin-top: 0;
+}
+
+.about-list {
+    margin: 0;
+    padding-left: 1.2rem;
+    line-height: 1.8;
+}
+
+.about-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(220px, 1fr));
+    gap: 0.8rem;
+}
+
+.about-chip {
+    border: 1px solid rgba(0, 212, 255, 0.25);
+    background: rgba(0, 212, 255, 0.08);
+    padding: 0.75rem 0.9rem;
+    font-size: 0.92rem;
+}
+
+.about-dev p {
+    margin: 0.45rem 0;
+}
+
+@media (max-width: 900px) {
+    .main-container {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "sidebar"
+            "content";
+    }
+
+    .sidebar {
+        position: static;
+        height: auto;
+    }
+
+    .main-content {
+        padding: 1.25rem;
+    }
+
+    .about-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* --- 5. System Page --- */
+.system-layout {
+    max-width: 1100px;
+}
+
+.system-card h3 {
+    margin-top: 0;
+}
+
+.system-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 0.85rem;
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid rgba(48, 54, 61, 0.6);
+}
+
+.system-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.indicator {
+    font-weight: 700;
+}
+
+.indicator.active {
+    color: var(--success);
+}
+
+.indicator.warning {
+    color: #f59e0b;
+}
+
+.system-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(220px, 1fr));
+    gap: 1.2rem;
+}
+
+.system-stat h2 {
+    margin: 0 0 0.45rem;
+    font-size: 2rem;
+}
+
+.system-stat p {
+    margin: 0;
+    color: var(--text-secondary);
+}
+
+@media (max-width: 900px) {
+    .system-stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .system-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
