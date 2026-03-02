@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#031526"/>
+      <stop offset="100%" stop-color="#010409"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="68%" cy="32%" r="40%">
+      <stop offset="0%" stop-color="#00d4ff" stop-opacity="0.34"/>
+      <stop offset="100%" stop-color="#00d4ff" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="36" height="36" patternUnits="userSpaceOnUse">
+      <path d="M36 0H0V36" fill="none" stroke="#0b2a42" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="1920" height="1080" fill="url(#g1)"/>
+  <rect width="1920" height="1080" fill="url(#grid)" opacity="0.72"/>
+  <circle cx="1340" cy="360" r="470" fill="url(#glow)"/>
+
+  <g opacity="0.18" stroke="#00d4ff" stroke-width="2" fill="none">
+    <path d="M180 890L420 670L640 760L970 520L1260 640L1570 390" />
+    <path d="M160 470L460 390L760 570L1080 350L1420 470L1740 240" />
+    <circle cx="420" cy="670" r="8"/>
+    <circle cx="970" cy="520" r="8"/>
+    <circle cx="1570" cy="390" r="8"/>
+  </g>
+
+  <g transform="translate(1380 520)" fill="none" stroke="#08e3ff" stroke-width="8" opacity="0.3">
+    <path d="M0 -80L110 -35V40C110 130 62 200 0 230C-62 200 -110 130 -110 40V-35Z"/>
+    <path d="M-36 56L-8 84L42 26"/>
+  </g>
+</svg>

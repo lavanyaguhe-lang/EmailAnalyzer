@@ -1,0 +1,300 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PHISH-SHIELD | Settings</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+<style>
+
+/* ============ SETTINGS LAYOUT ============ */
+
+.settings-shell {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+.settings-card {
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: rgba(13,17,23,0.75);
+    backdrop-filter: blur(8px);
+    transition: 0.3s;
+}
+
+.settings-card:hover {
+    border-color: var(--accent);
+}
+
+.settings-card h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Grid */
+.settings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+}
+
+.input-group label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.input-group input,
+.input-group select {
+    margin-top: 0.3rem;
+}
+
+/* Toggle Switch */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 42px;
+    height: 22px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    background-color: #444;
+    border-radius: 34px;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    border-radius: 50%;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: var(--accent);
+}
+
+input:checked + .slider:before {
+    transform: translateX(20px);
+}
+
+.switch-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 0.8rem;
+}
+
+/* Flash Messages */
+.flash-box {
+    border-left: 4px solid var(--accent);
+    padding: 0.7rem 1rem;
+    margin-bottom: 1rem;
+    background: rgba(13,17,23,0.8);
+}
+
+/* Buttons */
+.btn-primary {
+    margin-top: 1rem;
+    padding: 0.6rem 1rem;
+    border-radius: 6px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .settings-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+</style>
+</head>
+
+<body>
+<div class="main-container">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="logo" style="color: var(--accent); font-weight: bold; font-size: 1.5rem; margin-bottom: 3rem;">
+            <i class='bx bxs-shield-x'></i> PHISH-SHIELD
+        </div>
+        <nav>
+            <a href="/dashboard" class="nav-item"><i class='bx bxs-terminal'></i> ANALYZER</a>
+            <a href="/alerts" class="nav-item"><i class='bx bxs-bell-ring'></i> ALERT CENTER</a>
+            <a href="/users" class="nav-item"><i class='bx bxs-user-detail'></i> USER MANAGEMENT</a>
+            <a href="/about" class="nav-item"><i class='bx bxs-info-circle'></i> ABOUT SYSTEM</a>
+            <a href="/system" class="nav-item"><i class='bx bxs-chip'></i> SYSTEM STATUS</a>
+            <a href="/settings" class="nav-item active"><i class='bx bxs-cog'></i> SETTINGS</a>
+            <a href="/logout" class="nav-item terminate"><i class='bx bxs-log-out'></i> TERMINATE</a>
+        </nav>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <header style="border-bottom: 1px solid var(--border); margin-bottom: 1.5rem; padding-bottom: 1rem;">
+            <h1 style="margin:0;">SYSTEM SETTINGS</h1>
+            <p style="color: var(--text-secondary); margin-top: 0.3rem;">
+                Manage account security, detection engine, and notification preferences.
+            </p>
+        </header>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-box">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="settings-shell">
+
+            <!-- PROFILE -->
+            <section class="settings-card">
+                <h3><i class='bx bxs-user'></i> Profile Settings</h3>
+                <form method="POST" class="settings-grid">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="form_type" value="profile">
+
+                    <div class="input-group">
+                        <label>Username</label>
+                        <input type="text" name="username" value="{{ user.username or '' }}" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Display Name</label>
+                        <input type="text" name="display_name" value="{{ user.display_name or '' }}">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Email</label>
+                        <input type="email" name="email" value="{{ user.email or '' }}" required>
+                    </div>
+
+                    <div>
+                        <button type="submit" class="btn-primary">SAVE PROFILE</button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- PASSWORD -->
+            <section class="settings-card">
+                <h3><i class='bx bxs-lock-alt'></i> Security</h3>
+                <form method="POST" class="settings-grid">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="form_type" value="password">
+
+                    <div class="input-group">
+                        <label>Current Password</label>
+                        <input type="password" name="current_password" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label>New Password</label>
+                        <input type="password" name="new_password" minlength="8" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Confirm New Password</label>
+                        <input type="password" name="confirm_password" minlength="8" required>
+                    </div>
+
+                    <div>
+                        <button type="submit" class="btn-primary">UPDATE PASSWORD</button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- DETECTION ENGINE -->
+            <section class="settings-card">
+                <h3><i class='bx bxs-brain'></i> Detection Engine</h3>
+                <form method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="form_type" value="engine">
+
+                    <div class="input-group" style="max-width:300px;">
+                        <label>Risk Threshold (%)</label>
+                        <input type="number" name="risk_threshold" value="75" min="1" max="100">
+                    </div>
+
+                    <div class="switch-row">
+                        <span>Enable URL Analysis</span>
+                        <label class="switch">
+                            <input type="checkbox" name="url_analysis" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="switch-row">
+                        <span>Enable Email Content Scan</span>
+                        <label class="switch">
+                            <input type="checkbox" name="email_scan" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn-primary">SAVE ENGINE SETTINGS</button>
+                </form>
+            </section>
+
+            <!-- NOTIFICATIONS -->
+            <section class="settings-card">
+                <h3><i class='bx bxs-bell-ring'></i> Notification Settings</h3>
+                <form method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="form_type" value="notifications">
+
+                    <div class="input-group" style="max-width:400px;">
+                        <label>Notification Email</label>
+                        <input type="email" name="notification_email_pref" value="{{ user.notification_email or '' }}">
+                    </div>
+
+                    <div class="switch-row">
+                        <span>Notify on High-Risk Alerts</span>
+                        <label class="switch">
+                            <input type="checkbox" name="notify_on_high" {% if user.notify_on_high %}checked{% endif %}>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="switch-row">
+                        <span>Notify on Suspicious Alerts</span>
+                        <label class="switch">
+                            <input type="checkbox" name="notify_on_suspicious" {% if user.notify_on_suspicious %}checked{% endif %}>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn-primary">SAVE NOTIFICATION SETTINGS</button>
+                </form>
+            </section>
+
+        </div>
+    </main>
+</div>
+</body>
+</html>
