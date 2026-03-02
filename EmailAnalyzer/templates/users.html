@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PHISH-SHIELD | User Management</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body>
+<div class="main-container about-layout">
+    <aside class="sidebar">
+        <div class="logo" style="color: var(--accent); font-weight: bold; font-size: 1.5rem; margin-bottom: 3rem;">
+            <i class='bx bxs-shield-x'></i> PHISH-SHIELD
+        </div>
+        <nav>
+            <a href="/dashboard" class="nav-item"><i class='bx bxs-terminal'></i> ANALYZER</a>
+            <a href="/alerts" class="nav-item"><i class='bx bxs-bell-ring'></i> ALERT CENTER</a>
+            <a href="/users" class="nav-item active"><i class='bx bxs-user-detail'></i> USER MANAGEMENT</a>
+            <a href="/about" class="nav-item"><i class='bx bxs-info-circle'></i> ABOUT SYSTEM</a>
+            <a href="/system" class="nav-item"><i class='bx bxs-chip'></i> SYSTEM STATUS</a>
+            <a href="/settings" class="nav-item"><i class='bx bxs-cog'></i> SETTINGS</a>
+            <a href="/logout" class="nav-item terminate"><i class='bx bxs-log-out'></i> TERMINATE</a>
+        </nav>
+    </aside>
+
+    <main class="main-content about-layout">
+        <header class="about-header">
+            <p class="panel-eyebrow">Access Control</p>
+            <h1>User Management</h1>
+            <p class="panel-copy">Manage user status and remove accounts from the platform.</p>
+        </header>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <section class="card about-card" style="padding: 0.9rem 1rem; margin-bottom: 1rem;">
+                <p style="margin: 0;">{{ message }}</p>
+            </section>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <section class="card about-card">
+            <table class="audit-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.username }}</td>
+                        <td><span class="status-pill {{ user.role_pill }}">{{ user.role }}</span></td>
+                        <td><span class="status-pill {{ user.status_pill }}">{{ user.status }}</span></td>
+                        <td>
+                            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                                <form method="POST" action="{{ url_for('toggle_user', user_id=user.id) }}" onsubmit="return confirm('Toggle this user status?')">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit" style="background:var(--accent);border:none;padding:7px 10px;font-weight:700;cursor:pointer;">TOGGLE</button>
+                                </form>
+                                <form method="POST" action="{{ url_for('delete_user', user_id=user.id) }}" onsubmit="return confirm('Delete this user? This cannot be undone.')">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit" style="background:#dc2626;color:#fff;border:none;padding:7px 10px;font-weight:700;cursor:pointer;">DELETE</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% if not users %}
+                    <tr>
+                        <td colspan="5">No users found.</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </section>
+    </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PHISH-SHIELD | System Monitor</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body>
+<div class="main-container about-layout">
+    <aside class="sidebar">
+        <div class="logo" style="color: var(--accent); font-weight: bold; font-size: 1.5rem; margin-bottom: 3rem;">
+            <i class='bx bxs-shield-x'></i> PHISH-SHIELD
+        </div>
+        <nav>
+            <a href="/dashboard" class="nav-item"><i class='bx bxs-terminal'></i> ANALYZER</a>
+            <a href="/alerts" class="nav-item"><i class='bx bxs-bell-ring'></i> ALERT CENTER</a>
+            <a href="/users" class="nav-item"><i class='bx bxs-user-detail'></i> USER MANAGEMENT</a>
+            <a href="/about" class="nav-item"><i class='bx bxs-info-circle'></i> ABOUT SYSTEM</a>
+            <a href="/system" class="nav-item active"><i class='bx bxs-chip'></i> SYSTEM STATUS</a>
+            <a href="/settings" class="nav-item"><i class='bx bxs-cog'></i> SETTINGS</a>
+            <a href="/logout" class="nav-item terminate"><i class='bx bxs-log-out'></i> TERMINATE</a>
+        </nav>
+    </aside>
+
+    <main class="main-content system-layout">
+        <header class="about-header">
+            <p class="panel-eyebrow">Live Infrastructure</p>
+            <h1>System Monitor</h1>
+            <p class="panel-copy">Real-time status of core detection services and platform health metrics.</p>
+        </header>
+
+        <section class="card system-card">
+            <h3>Core Services</h3>
+
+            <div class="system-row">
+                <span>AI Threat Engine</span>
+                <span class="indicator active"><span class="pulse"></span>RUNNING</span>
+            </div>
+
+            <div class="system-row">
+                <span>Database Connection</span>
+                <span class="indicator active">CONNECTED</span>
+            </div>
+
+            <div class="system-row">
+                <span>Alert Monitoring</span>
+                <span class="indicator active">ACTIVE</span>
+            </div>
+
+            <div class="system-row">
+                <span>Firewall Integration</span>
+                <span class="indicator warning">PARTIAL</span>
+            </div>
+        </section>
+
+        <section class="card system-card">
+            <h3>System Statistics</h3>
+
+            <div class="system-stats-grid">
+                <div class="system-stat">
+                    <h2 id="total-users">0</h2>
+                    <p>Registered Users</p>
+                </div>
+
+                <div class="system-stat">
+                    <h2 id="total-scans">0</h2>
+                    <p>Total Scans Performed</p>
+                </div>
+
+                <div class="system-stat">
+                    <h2 id="active-alerts">0</h2>
+                    <p>Active Threat Alerts</p>
+                </div>
+
+                <div class="system-stat">
+                    <h2 id="uptime">0h 0m</h2>
+                    <p>Server Uptime</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="card system-card">
+            <h3>System Version</h3>
+            <p>Version: v1.0.0</p>
+            <p>Security Patch Level: 2026.02 Stable</p>
+            <p>Status: <span class="indicator active">SECURE</span></p>
+        </section>
+    </main>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", async function () {
+    try {
+        const response = await fetch("/system/stats", { headers: { "Accept": "application/json" } });
+        if (!response.ok) return;
+        const stats = await response.json();
+
+        const totalUsersEl = document.getElementById("total-users");
+        const totalScansEl = document.getElementById("total-scans");
+        const activeAlertsEl = document.getElementById("active-alerts");
+        const uptimeEl = document.getElementById("uptime");
+
+        if (totalUsersEl) totalUsersEl.textContent = String(stats.total_users ?? 0);
+        if (totalScansEl) totalScansEl.textContent = String(stats.total_scans ?? 0);
+        if (activeAlertsEl) activeAlertsEl.textContent = String(stats.active_alerts ?? 0);
+        if (uptimeEl) uptimeEl.textContent = String(stats.uptime ?? "0h 0m");
+    } catch (err) {
+        console.error("Failed to load system stats", err);
+    }
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,77 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHISH-SHIELD | About System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body>
+<div class="main-container about-layout">
+    <aside class="sidebar">
+        <div class="logo" style="color: var(--accent); font-weight: bold; font-size: 1.5rem; margin-bottom: 3rem;">
+            <i class='bx bxs-shield-x'></i> PHISH-SHIELD
+        </div>
+        <nav>
+            <a href="/dashboard" class="nav-item"><i class='bx bxs-terminal'></i> ANALYZER</a>
+            <a href="/alerts" class="nav-item"><i class='bx bxs-bell-ring'></i> ALERT CENTER</a>
+            <a href="/users" class="nav-item"><i class='bx bxs-user-detail'></i> USER MANAGEMENT</a>
+            <a href="/about" class="nav-item active"><i class='bx bxs-info-circle'></i> ABOUT SYSTEM</a>
+            <a href="/system" class="nav-item"><i class='bx bxs-chip'></i> SYSTEM STATUS</a>
+            <a href="/settings" class="nav-item"><i class='bx bxs-cog'></i> SETTINGS</a>
+            <a href="/logout" class="nav-item terminate"><i class='bx bxs-log-out'></i> TERMINATE</a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <header class="about-header">
+            <p class="panel-eyebrow">Project Information</p>
+            <h1>About PHISH-SHIELD</h1>
+            <p class="panel-copy">An email and URL threat analysis platform designed to detect phishing indicators and provide actionable risk intelligence.</p>
+        </header>
+
+        <section class="card about-card">
+            <h3>Project Description</h3>
+            <p>
+                PHISH-SHIELD analyzes suspicious email text and links using a hybrid detection pipeline.
+                It combines rule-based phishing indicators with ML-style scoring to classify threats as
+                Secure, Suspicious, or Phishing and stores scan history in MySQL for audit and reporting.
+            </p>
+        </section>
+
+        <section class="card about-card">
+            <h3>Objectives</h3>
+            <ul class="about-list">
+                <li>Detect phishing emails and URLs with explainable risk scoring.</li>
+                <li>Reduce false positives using calibrated rule and model thresholds.</li>
+                <li>Persist scan events in a database for traceability and forensic review.</li>
+                <li>Provide a simple UI for security analysts to monitor and investigate threats.</li>
+            </ul>
+        </section>
+
+        <section class="card about-card">
+            <h3>Technologies Used</h3>
+            <div class="about-grid">
+                <div class="about-chip"><strong>Backend:</strong> Python, Flask</div>
+                <div class="about-chip"><strong>Frontend:</strong> HTML, CSS, Jinja2</div>
+                <div class="about-chip"><strong>Database:</strong> MySQL</div>
+                <div class="about-chip"><strong>NLP/ML:</strong> TextBlob + Hybrid Scoring</div>
+                <div class="about-chip"><strong>Security:</strong> Session cookies, hashed passwords</div>
+                <div class="about-chip"><strong>Reporting:</strong> Chart-based risk visualization</div>
+            </div>
+        </section>
+
+        <section class="card about-card">
+            <h3>Developer Details</h3>
+            <div class="about-dev">
+                <p><strong>Name:</strong> Lavanya Guhe</p>
+                <p><strong>Role:</strong> Developer</p>
+                <p><strong>Project:</strong> EmailAnalyzer / PHISH-SHIELD</p>
+                <p><strong>Focus:</strong> Phishing detection, secure web app, analyst UX</p>
+            </div>
+        </section>
+    </main>
+</div>
+</body>
+</html>

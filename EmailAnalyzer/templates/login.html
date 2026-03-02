@@ -1,0 +1,65 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PHISH-SHIELD | Access Terminal</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body class="auth-page login-page">
+
+        <section class="auth-card login-card">
+            <div class="auth-header">
+                <i class='bx bxs-shield-lock'></i>
+                <h2>Secure Login</h2>
+                <p>Authorized personnel only. Accessing restricted terminal.</p>
+            </div>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="auth-messages">
+                        {% for category, message in messages %}
+                            <p class="auth-message">{{ message }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <form action="/login" method="POST" class="auth-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="input-group">
+                    <label><i class='bx bxs-user-circle'></i> Operator Alias</label>
+                    <input type="text" name="username" placeholder="Enter Username" required>
+                </div>
+
+                <div class="input-group password-group">
+                    <label><i class='bx bxs-key'></i> Access Key</label>
+                    <input id="login-password" type="password" name="password" placeholder="Enter Password" required>
+                    <button type="button" id="password-toggle" class="password-toggle" aria-label="Show password">
+                        <i class='bx bx-show'></i>
+                    </button>
+                </div>
+
+                <button type="submit" class="btn-primary">AUTHENTICATE</button>
+            </form>
+
+            <div class="auth-footer">
+                <span>Need access?</span>
+                <a href="/signup">Create Account</a>
+            </div>
+        </section>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const toggle = document.getElementById("password-toggle");
+    const password = document.getElementById("login-password");
+    if (!toggle || !password) return;
+    toggle.addEventListener("click", function () {
+        const masked = password.type === "password";
+        password.type = masked ? "text" : "password";
+        toggle.innerHTML = masked ? "<i class='bx bx-hide'></i>" : "<i class='bx bx-show'></i>";
+    });
+});
+</script>
+
+</body>
+</html>
