@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PHISH-SHIELD | Create Account</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body class="auth-page login-page">
+
+        <section class="auth-card login-card">
+            <div class="auth-header">
+                <i class='bx bxs-user-plus'></i>
+                <h2>Create Account</h2>
+                <p>Register an operator account to use the analyzer.</p>
+            </div>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="auth-messages">
+                        {% for category, message in messages %}
+                            <p class="auth-message">{{ message }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <form action="/signup" method="POST" class="auth-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="input-group">
+                    <label><i class='bx bxs-user-circle'></i> Username</label>
+                    <input type="text" name="username" placeholder="Choose username" required>
+                </div>
+
+                <div class="input-group">
+                    <label><i class='bx bxs-envelope'></i> Email</label>
+                    <input type="email" name="email" placeholder="you@example.com" required>
+                </div>
+
+                <div class="input-group">
+                    <label><i class='bx bxs-key'></i> Password</label>
+                    <input type="password" name="password" placeholder="At least 8 characters" required>
+                </div>
+
+                <div class="input-group">
+                    <label><i class='bx bxs-key'></i> Confirm Password</label>
+                    <input type="password" name="confirm_password" placeholder="Re-enter password" required>
+                </div>
+
+                <button type="submit" class="btn-primary">CREATE ACCOUNT</button>
+            </form>
+
+            <div class="auth-footer">
+                <span>Already registered?</span>
+                <a href="/login">Back to Login</a>
+            </div>
+        </section>
+
+</body>
+</html>

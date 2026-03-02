@@ -30,17 +30,38 @@
                 OPERATOR: {{ session['username'] }} | STATUS: <span style="color: var(--success);">ACTIVE</span>
             </p>
         </header>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="auth-messages" style="margin-bottom: 1rem;">
+                    {% for category, message in messages %}
+                        <p class="auth-message">{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
 
         <div class="card">
             <h3>HEURISTIC SCAN ENGINE</h3>
             <form method="POST">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <textarea name="email_content" style="width: 100%; background: #010409; color: var(--accent); border: 1px solid var(--accent); padding: 1rem; font-family: var(--font-mono);" rows="8" placeholder="PASTE RAW PAYLOAD..."></textarea>
+                <textarea name="email_content" style="width: 100%; background: #010409; color: var(--accent); border: 1px solid var(--accent); padding: 1rem; font-family: var(--font-mono);" rows="8" placeholder="PASTE EMAIL CONTENT...">{{ email_text or '' }}</textarea>
+                <input type="text" name="url_input" value="{{ url_input or '' }}" placeholder="https://example.com/login" style="width: 100%; margin-top: 1rem; background: #010409; color: var(--accent); border: 1px solid var(--accent); padding: 0.8rem; font-family: var(--font-mono);">
                 <button type="submit" style="margin-top: 1rem; background: var(--accent); border: none; padding: 10px 25px; font-weight: bold; cursor: pointer;">EXECUTE ANALYSIS</button>
             </form>
         </div>
 
         {% if result %}
+        <div class="card" style="margin-top: 1rem;">
+            <h3>SCAN RESULT</h3>
+            <p>
+                Verdict:
+                <span class="status-pill {{ result.pill_class }}">{{ result.verdict }}</span>
+            </p>
+            <p>Risk Score: <strong>{{ result.risk_score }}%</strong></p>
+            <p>Model Score: <strong>{{ result.ml_score }}%</strong></p>
+            <p>Sentiment: <strong>{{ result.sentiment }}</strong></p>
+            <p>Reason: {{ result.explanation }}</p>
+        </div>
         {% endif %}
 
     </main>

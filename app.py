@@ -39,10 +39,11 @@ def classify_scan_verdict(risk_score):
 
 # Database Configuration
 db_config = {
-    'host': 'localhost',
-    'user': 'root', 
-    'password': 'root', 
-    'database': 'analyzer_db'    
+    'host': os.environ.get('DB_HOST', 'localhost'),
+    'user': os.environ.get('DB_USER', 'root'),
+    'password': os.environ.get('DB_PASSWORD', 'root'),
+    'database': os.environ.get('DB_NAME', 'analyzer_db'),
+    'port': int(os.environ.get('DB_PORT', '3306')),
 }
 
 def get_db_connection():
@@ -175,6 +176,24 @@ def init_db():
                 ON DELETE CASCADE
                 """
             )
+        default_admin_username = os.environ.get("DEFAULT_ADMIN_USERNAME", "").strip()
+        default_admin_email = os.environ.get("DEFAULT_ADMIN_EMAIL", "").strip().lower()
+        default_admin_password = os.environ.get("DEFAULT_ADMIN_PASSWORD", "").strip()
+        if default_admin_username and default_admin_email and default_admin_password:
+            cursor.execute("SELECT id FROM `user` WHERE username = %s", (default_admin_username,))
+            if not cursor.fetchone():
+                cursor.execute(
+                    """
+                    INSERT INTO `user` (username, email, password, role, is_active)
+                    VALUES (%s, %s, %s, 'ADMIN', 1)
+                    """,
+                    (
+                        default_admin_username,
+                        default_admin_email,
+                        generate_password_hash(default_admin_password),
+                    ),
+                )
+
         conn.commit()
     finally:
         cursor.close()
@@ -281,6 +300,9 @@ def login():
             user = cursor.fetchone()
 
             if user and check_password_hash(user['password'], password_candidate):
+                if int(user.get('is_active') or 1) != 1:
+                    flash("Account blocked. Contact an administrator.", "danger")
+                    return render_template('login.html')
                 session.clear()
                 session['user_id'] = user['id']
                 session['username'] = user['username']
@@ -291,6 +313,53 @@ def login():
             cursor.close()
             conn.close()
     return render_template('login.html')
+
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        if not verify_csrf_token():
+            flash("Invalid security token. Please retry.", "danger")
+            return render_template('signup.html')
+
+        username = request.form.get('username', '').strip()
+        email = request.form.get('email', '').strip().lower()
+        password = request.form.get('password', '')
+        confirm_password = request.form.get('confirm_password', '')
+
+        if not username or not email or not password or not confirm_password:
+            flash("All fields are required.", "warning")
+            return render_template('signup.html')
+        if '@' not in email:
+            flash("Enter a valid email address.", "warning")
+            return render_template('signup.html')
+        if len(password) < 8:
+            flash("Password must be at least 8 characters.", "warning")
+            return render_template('signup.html')
+        if password != confirm_password:
+            flash("Passwords do not match.", "warning")
+            return render_template('signup.html')
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        try:
+            cursor.execute(
+                "INSERT INTO `user` (username, email, password, role, is_active) VALUES (%s, %s, %s, 'USER', 1)",
+                (username, email, generate_password_hash(password)),
+            )
+            conn.commit()
+            flash("Account created. Please log in.", "success")
+            return redirect(url_for('login'))
+        except mysql.connector.Error as err:
+            conn.rollback()
+            if err.errno == 1062:
+                flash("Username or email already exists.", "warning")
+            else:
+                flash(f"Database error during signup ({err}).", "danger")
+        finally:
+            cursor.close()
+            conn.close()
+    return render_template('signup.html')
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -356,18 +425,24 @@ def dashboard():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True) 
     result = None
-    history = []
+    email_text = ""
+    url_input = ""
 
     if request.method == 'POST':
         if not verify_csrf_token():
             flash("Invalid security token. Please retry.", "danger")
             return redirect(url_for('dashboard'))
-        email_text = request.form.get('email_content')
-        if email_text:
-            result = analyze_email_text(email_text)
+        email_text = request.form.get('email_content', '').strip()
+        url_input = request.form.get('url_input', '').strip()
+        if email_text or url_input:
+            result = analyze_email_text(email_text, url_input)
             risk_score = int(result.get('risk_score', 0))
             is_spam_val = 1 if risk_score >= 70 else 0
             explanation = str(result.get('explanation', 'No details available'))[:500]
+            verdict, pill_class = classify_scan_verdict(risk_score)
+            result['verdict'] = verdict
+            result['pill_class'] = pill_class
+            payload = f"Email Text:\n{email_text}\n\nURL:\n{url_input}".strip()
             
             try:
                 query = """
@@ -376,19 +451,20 @@ def dashboard():
                 """
                 cursor.execute(
                     query,
-                    (session['user_id'], email_text, result['sentiment'], is_spam_val, risk_score, explanation),
+                    (session['user_id'], payload, result['sentiment'], is_spam_val, risk_score, explanation),
                 )
                 conn.commit()
-                flash("Analysis complete. Redirected to Alert Center.", "success")
-                return redirect(url_for('alerts'))
+                flash("Analysis complete.", "success")
             except Exception as e:
                 print(f"DATABASE ERROR: {e}")
                 flash("Could not save analysis to history.", "warning")
                 conn.rollback()
+        else:
+            flash("Enter email text or URL before analyzing.", "warning")
 
     cursor.close()
     conn.close()
-    return render_template('dashboard.html', result=result, history=history)
+    return render_template('dashboard.html', result=result, email_text=email_text, url_input=url_input)
 
 @app.route("/report")
 @login_required
